@@ -3,7 +3,7 @@ package.path = package.path .. ";/usr/share/zbstudio/lualibs/mobdebug/?.lua"
 --require('mobdebug').start()
 
 settlements = {}
-settlements.modpath = minetest.get_modpath("settlements");
+settlements.modpath = minetest.get_modpath("mcl2_settlements");
 
 vm, data, va, emin, emax = 1
 
@@ -20,17 +20,18 @@ settlements_in_world = settlements.load()
 --
 -- register block for npc spawn
 --
-minetest.register_node("settlements:junglewood", {
+minetest.register_node("mcl2_settlements:junglewood", {
     description = "special junglewood floor",
     tiles = {"default_junglewood.png"},
     groups = {choppy=3, wood=2},
-    sounds = default.node_sound_wood_defaults(),
+    sounds = mcl_sounds.node_sound_wood_defaults(),
   })
 --
 -- register inhabitants
 --
-if minetest.get_modpath("mobs_npc") ~= nil then
-  mobs:register_spawn("mobs_npc:npc", --name
+--[[Disable for now.
+if minetest.get_modpath("mobs_mc") ~= nil then
+  mobs:register_spawn("mobs_mc:npc", --name
     {"settlements:junglewood"}, --nodes
     20, --max_light
     0, --min_light
@@ -38,7 +39,7 @@ if minetest.get_modpath("mobs_npc") ~= nil then
     7, --active_object_count
     31000, --max_height
     nil) --day_toggle
-  mobs:register_spawn("mobs_npc:trader", --name
+  mobs:register_spawn("mobs_mc:trader", --name
     {"settlements:junglewood"}, --nodes
     20, --max_light
     0, --min_light
@@ -47,6 +48,7 @@ if minetest.get_modpath("mobs_npc") ~= nil then
     31000, --max_height
     nil)--day_toggle
 end 
+--]]
 --
 -- on map generation, try to build a settlement
 --
@@ -156,6 +158,7 @@ minetest.register_on_generated(function(minp, maxp)
           -- evaluate settlement_info and initialize furnaces and chests
           --
           settlements.initialize_nodes()
+			
         end)
 
 
@@ -164,7 +167,7 @@ minetest.register_on_generated(function(minp, maxp)
 --
 -- manually place buildings, for debugging only
 --
-minetest.register_craftitem("settlements:tool", {
+minetest.register_craftitem("mcl2_settlements:tool", {
     description = "settlements build tool",
     inventory_image = "default_tool_woodshovel.png",
     --
@@ -256,8 +259,10 @@ minetest.register_craftitem("settlements:tool", {
 
         --
         -- evaluate settlement_info and initialize furnaces and chests
-        --
-        settlements.initialize_nodes()
+        -- temporarily disabled in utils.lua
+
+       settlements.initialize_nodes()
+
         local end_time = os.time()
         minetest.chat_send_all("Zeit ".. end_time - start_time)
 --

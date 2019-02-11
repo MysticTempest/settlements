@@ -1,6 +1,6 @@
 Minetest mod "Settlements"
 =========================
-version: 0.1 alpha
+version: 0.3 alpha
 
 License of source code: WTFPL
 -----------------------------
@@ -16,8 +16,13 @@ http://sam.zoy.org/wtfpl/COPYING for more details.
 Using the mod:
 --------------
 
-This mod adds settlements on world generation
+This mod adds settlements on world generation; modified for use in MineClone2.
+
 
 Credits:
 --------------
 This mod is based on "ruins" by BlockMen
+
+
+Completely new schematics for MineClone2:
+MysticTempest - CC-BY-SA 4.0

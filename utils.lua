@@ -1,27 +1,36 @@
-local c_dirt_with_grass             = minetest.get_content_id("default:dirt_with_grass")
-local c_dirt_with_snow              = minetest.get_content_id("default:dirt_with_snow")
-local c_dirt_with_dry_grass         = minetest.get_content_id("default:dirt_with_dry_grass")
-local c_dirt_with_coniferous_litter = minetest.get_content_id("default:dirt_with_coniferous_litter")
-local c_sand                        = minetest.get_content_id("default:sand")
-local c_desert_sand                 = minetest.get_content_id("default:desert_sand")
+local c_dirt_with_grass             = minetest.get_content_id("mcl_core:dirt_with_grass")
+local c_dirt_with_snow              = minetest.get_content_id("mcl_core:dirt_with_grass_snow")
+local c_dirt_with_dry_grass         = minetest.get_content_id("mcl_core:dirt_with_dry_grass")
+local c_dirt_with_coniferous_litter = minetest.get_content_id("mcl_core:podzol")
+local c_sand                        = minetest.get_content_id("mcl_core:sand")
+local c_desert_sand                 = minetest.get_content_id("mcl_core:redsand")
 --
 local c_air                         = minetest.get_content_id("air")
-local c_snow                        = minetest.get_content_id("default:snow")
-local c_fern_1                      = minetest.get_content_id("default:fern_1")
-local c_fern_2                      = minetest.get_content_id("default:fern_2")
-local c_fern_3                      = minetest.get_content_id("default:fern_3")
-local c_rose                        = minetest.get_content_id("flowers:rose")
-local c_viola                       = minetest.get_content_id("flowers:viola")
-local c_geranium                    = minetest.get_content_id("flowers:geranium")
-local c_tulip                       = minetest.get_content_id("flowers:tulip")
-local c_dandelion_y                 = minetest.get_content_id("flowers:dandelion_yellow")
-local c_dandelion_w                 = minetest.get_content_id("flowers:dandelion_white")
-local c_bush_leaves                 = minetest.get_content_id("default:bush_leaves")
-local c_bush_stem                   = minetest.get_content_id("default:bush_stem")
-local c_a_bush_leaves               = minetest.get_content_id("default:acacia_bush_leaves")
-local c_a_bush_stem                 = minetest.get_content_id("default:acacia_bush_stem")
-local c_water_source                = minetest.get_content_id("default:water_source")
-local c_water_flowing                = minetest.get_content_id("default:water_flowing")
+local c_snow                        = minetest.get_content_id("mcl_core:snowblock")
+local c_fern_1                      = minetest.get_content_id("mcl_flowers:fern")
+local c_fern_2                      = minetest.get_content_id("mcl_flowers:fern")
+local c_fern_3                      = minetest.get_content_id("mcl_flowers:fern")
+local c_rose                        = minetest.get_content_id("mcl_flowers:poppy")
+local c_viola                       = minetest.get_content_id("mcl_flowers:blue_orchid")
+local c_geranium                    = minetest.get_content_id("mcl_flowers:allium")
+local c_tulip                       = minetest.get_content_id("mcl_flowers:tulip_orange")
+local c_dandelion_y                 = minetest.get_content_id("mcl_flowers:dandelion")
+local c_dandelion_w                 = minetest.get_content_id("mcl_flowers:oxeye_daisy")
+local c_bush_leaves                 = minetest.get_content_id("mcl_core:leaves")
+local c_bush_stem                   = minetest.get_content_id("mcl_core:tree")
+local c_a_bush_leaves               = minetest.get_content_id("mcl_core:leaves")
+local c_a_bush_stem                 = minetest.get_content_id("mcl_core:tree")
+local c_water_source                = minetest.get_content_id("mcl_core:water_source")
+local c_water_flowing               = minetest.get_content_id("mcl_core:water_flowing")
+
+--my grasses
+local c_swamp_grass                 = minetest.get_content_id("biome_dirts:dirt_with_swamp_grass")
+local c_jungle_grass                = minetest.get_content_id("biome_dirts:dirt_with_jungle_grass")
+local c_jungle_edge_grass           = minetest.get_content_id("biome_dirts:dirt_with_jungle_edge_grass")
+local c_roofforest_grass            = minetest.get_content_id("biome_dirts:dirt_with_roofforest_grass")
+local c_birchforest_grass           = minetest.get_content_id("biome_dirts:dirt_with_birchforest_grass")
+local c_forest_grass                = minetest.get_content_id("biome_dirts:dirt_with_forest_grass")
+local c_taiga_grass                 = minetest.get_content_id("biome_dirts:dirt_with_taiga_grass")
 -------------------------------------------------------------------------------
 -- function to copy tables
 -------------------------------------------------------------------------------
@@ -49,7 +58,14 @@ function settlements.find_surface_heightmap(pos, minp)
     c_dirt_with_dry_grass,        
     c_dirt_with_coniferous_litter,
     c_sand,                       
-    c_desert_sand
+    c_desert_sand,
+	c_swamp_grass,
+	c_jungle_grass,
+	c_jungle_edge_grass,
+	c_roofforest_grass,
+	c_birchforest_grass,
+	c_forest_grass,
+	c_taiga_grass,
   }
   local p6 = settlements.shallowCopy(pos)
   local heightmap = minetest.get_mapgen_object("heightmap")
@@ -78,11 +94,18 @@ function settlements.find_surface_lvm(pos, minp)
   local p6 = settlements.shallowCopy(pos)
   local surface_mat = {
     c_dirt_with_grass,            
-    c_dirt_with_snow ,            
+    c_dirt_with_snow,            
     c_dirt_with_dry_grass,        
     c_dirt_with_coniferous_litter,
     c_sand,                       
-    c_desert_sand
+    c_desert_sand,
+	c_swamp_grass,
+	c_jungle_grass,
+	c_jungle_edge_grass,
+	c_roofforest_grass,
+	c_birchforest_grass,
+	c_forest_grass,
+	c_taiga_grass,
   }
   local cnt = 0
   local itter -- count up or down
@@ -130,13 +153,20 @@ function settlements.find_surface(pos)
 -- baseplate material, to replace dirt with grass and where buildings can be built
 --
   local surface_mat = {
-    "default:dirt_with_grass",
-    "default:dirt_with_snow",
-    "default:dirt_with_dry_grass",
-    "default:dirt_with_coniferous_litter",
-    "default:sand",
-    "default:desert_sand",
---  "default:snow"
+    "mcl_core:dirt_with_grass",
+    "mcl_core:dirt_with_grass_snow",
+    "mcl_core:dirt_with_dry_grass",
+    "mcl_core:podzol",
+    "mcl_core:sand",
+    "mcl_core:redsand",
+	"biome_dirts:dirt_with_swamp_grass",
+	"biome_dirts:dirt_with_jungle_grass",
+	"biome_dirts:dirt_with_jungle_edge_grass",
+	"biome_dirts:dirt_with_roofforest_grass",
+	"biome_dirts:dirt_with_birchforest_grass",
+	"biome_dirts:dirt_with_forest_grass",
+	"biome_dirts:dirt_with_taiga_grass",
+--  "mcl_core:snowblock"
   }
   local cnt = 0
   local itter -- count up or down
@@ -229,37 +259,37 @@ end
 -------------------------------------------------------------------------------
 function settlements.fill_chest(pos)
   -- find chests within radius
-  --local chestpos = minetest.find_node_near(pos, 6, {"default:chest"})
+  --local chestpos = minetest.find_node_near(pos, 6, {"mcl_chests:chest"})
   local chestpos = pos
   -- initialize chest (mts chests don't have meta)
   local meta = minetest.get_meta(chestpos)
   if meta:get_string("infotext") ~= "Chest" then
-    minetest.registered_nodes["default:chest"].on_construct(chestpos)
+    minetest.registered_nodes["mcl_chests:chest"].on_construct(chestpos)
   end
   -- fill chest
   local inv = minetest.get_inventory( {type="node", pos=chestpos} )
   -- always
-  inv:add_item("main", "default:apple "..math.random(1,3))
+  inv:add_item("main", "mcl_core:apple "..math.random(1,3))
   -- low value items
   if math.random(0,1) < 1 then
-    inv:add_item("main", "farming:bread "..math.random(0,3))
-    inv:add_item("main", "default:steel_ingot "..math.random(0,3))
+    inv:add_item("main", "mcl_farming:bread "..math.random(0,3))
+    inv:add_item("main", "mcl_core:iron_ingot "..math.random(0,3))
     -- additional fillings when farmin mod enabled
     if minetest.get_modpath("farming") ~= nil and farming.mod == "redo" then
       if math.random(0,1) < 1 then
-        inv:add_item("main", "farming:melon_slice "..math.random(0,3))
-        inv:add_item("main", "farming:carrot "..math.random(0,3))
-        inv:add_item("main", "farming:corn "..math.random(0,3))
+        inv:add_item("main", "mcl_farming:melon_item "..math.random(0,3))
+        inv:add_item("mcl_farming:carrot_item "..math.random(0,3))
+        --inv:add_item("main", "farming:corn "..math.random(0,3))
       end
     end
   end
   -- medium value items
   if math.random(0,3) < 1 then
-    inv:add_item("main", "default:pick_steel "..math.random(0,1))
-    inv:add_item("main", "default:pick_bronze "..math.random(0,1))
-    inv:add_item("main", "fire:flint_and_steel "..math.random(0,1))
-    inv:add_item("main", "bucket:bucket_empty "..math.random(0,1))
-    inv:add_item("main", "default:sword_steel "..math.random(0,1))
+    inv:add_item("main", "mcl_tools:pick_iron "..math.random(0,1))
+    inv:add_item("main", "mcl_tools:pick_stone "..math.random(0,1))
+    inv:add_item("main", "mcl_fire:flint_and_steel "..math.random(0,1))
+    inv:add_item("main", "mcl_buckets:bucket_empty "..math.random(0,1))
+    inv:add_item("main", "mcl_tools:sword_iron "..math.random(0,1))
   end
 end
 -------------------------------------------------------------------------------
@@ -269,20 +299,27 @@ function settlements.initialize_furnace(pos)
   -- find chests within radius
   local furnacepos = minetest.find_node_near(pos, 
     7, --radius
-    {"default:furnace"})
+    {"mcl_furnaces:furnace"})
   -- initialize furnacepos (mts furnacepos don't have meta)
   if furnacepos 
   then
-    local meta = minetest.get_meta(furnacepos)
+		local meta = minetest.get_meta(pos)
+		meta:set_string("formspec", inactive_formspec)
+		local inv = meta:get_inventory()
+		inv:set_size('src', 1)
+		inv:set_size('fuel', 1)
+		inv:set_size('dst', 1)
     if meta:get_string("infotext") ~= "furnace" 
     then
-      minetest.registered_nodes["default:furnace"].on_construct(furnacepos)
+      minetest.registered_nodes["mcl_furnaces:furnace"].on_construct(furnacepos)
     end
   end
 end
 -------------------------------------------------------------------------------
 -- initialize furnace, chests, bookshelves
 -------------------------------------------------------------------------------
+--causes crash temporarily disable.
+
 function settlements.initialize_nodes()
   for i, built_house in ipairs(settlement_info) do
     for j, schem in ipairs(schematic_table) do
@@ -303,14 +340,14 @@ function settlements.initialize_nodes()
         for zi = 0,depth do
           local ptemp = {x=p.x+xi, y=p.y+yi, z=p.z+zi}
           local node = minetest.get_node(ptemp) 
-          if node.name == "default:furnace" or
-          node.name == "default:chest" or
-          node.name == "default:bookshelf"
+          if node.name == "mcl_furnaces:furnace" or
+          node.name == "mcl_chests:chest" or
+          node.name == "mcl_books:bookshelf"
           then
-            minetest.registered_nodes[node.name].on_construct(ptemp)
+           -- minetest.registered_nodes[node.name].on_construct(ptemp)
           end
           -- when chest is found -> fill with stuff
-          if node.name == "default:chest" then
+          if node.name == "mcl_chests:chest" then
             minetest.after(3,settlements.fill_chest,ptemp)
           end
         end
@@ -318,6 +355,7 @@ function settlements.initialize_nodes()
     end
   end
 end
+
 -------------------------------------------------------------------------------
 -- randomize table
 -------------------------------------------------------------------------------
