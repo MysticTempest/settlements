@@ -303,15 +303,28 @@ function settlements.initialize_furnace(pos)
   -- initialize furnacepos (mts furnacepos don't have meta)
   if furnacepos 
   then
-		local meta = minetest.get_meta(pos)
-		meta:set_string("formspec", inactive_formspec)
-		local inv = meta:get_inventory()
-		inv:set_size('src', 1)
-		inv:set_size('fuel', 1)
-		inv:set_size('dst', 1)
+    local meta = minetest.get_meta(furnacepos)
     if meta:get_string("infotext") ~= "furnace" 
     then
       minetest.registered_nodes["mcl_furnaces:furnace"].on_construct(furnacepos)
+    end
+  end
+end
+-------------------------------------------------------------------------------
+-- initialize anvil
+-------------------------------------------------------------------------------
+function settlements.initialize_anvil(pos)
+  -- find chests within radius
+  local anvilpos = minetest.find_node_near(pos, 
+    7, --radius
+    {"mcl_anvils:anvil"})
+  -- initialize anvilpos (mts anvilpos don't have meta)
+  if anvilpos 
+  then
+    local meta = minetest.get_meta(anvilpos)
+    if meta:get_string("infotext") ~= "anvil" 
+    then
+      minetest.registered_nodes["mcl_anvils:anvil"].on_construct(anvilpos)
     end
   end
 end
@@ -342,9 +355,9 @@ function settlements.initialize_nodes()
           local node = minetest.get_node(ptemp) 
           if node.name == "mcl_furnaces:furnace" or
           node.name == "mcl_chests:chest" or
-          node.name == "mcl_books:bookshelf"
+          node.name == "mcl_anvils:anvil"
           then
-           -- minetest.registered_nodes[node.name].on_construct(ptemp)
+            minetest.registered_nodes[node.name].on_construct(ptemp)
           end
           -- when chest is found -> fill with stuff
           if node.name == "mcl_chests:chest" then

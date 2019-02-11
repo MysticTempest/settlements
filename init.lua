@@ -261,7 +261,7 @@ minetest.register_craftitem("mcl2_settlements:tool", {
         -- evaluate settlement_info and initialize furnaces and chests
         -- temporarily disabled in utils.lua
 
-       settlements.initialize_nodes()
+        settlements.initialize_nodes()
 
         local end_time = os.time()
         minetest.chat_send_all("Zeit ".. end_time - start_time)
