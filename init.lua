@@ -170,7 +170,8 @@ minetest.register_on_generated(function(minp, maxp)
 minetest.register_craftitem("mcl2_settlements:tool", {
     description = "settlements build tool",
     inventory_image = "default_tool_woodshovel.png",
-    --
+--[[ 
+   --
     -- build single house
     --
     on_use = function(itemstack, placer, pointed_thing)
@@ -190,6 +191,7 @@ minetest.register_craftitem("mcl2_settlements:tool", {
 --        settlements.mts_save()
       end
     end,
+--]]
     --
     -- build ssettlement
     --

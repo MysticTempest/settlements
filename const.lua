@@ -56,7 +56,7 @@ settlements_in_world = {}
 --
 -- min_distance between settlements
 --
-min_dist_settlements = 1000
+min_dist_settlements = 150
 if settlements.debug == true 
 then
   min_dist_settlements = 200
@@ -64,7 +64,7 @@ end
 --
 -- maximum allowed difference in height for building a sttlement
 --
-max_height_difference = 10
+max_height_difference = 25
 --
 --
 --

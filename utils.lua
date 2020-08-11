@@ -245,7 +245,7 @@ end
 -- check distance to other settlements
 -------------------------------------------------------------------------------
 function settlements.check_distance_other_settlements(center_new_chunk)
-  local min_dist_settlements = 300
+  local min_dist_settlements = 150
   for i, pos in ipairs(settlements_in_world) do 
     local distance = vector.distance(center_new_chunk, pos)
     if distance < min_dist_settlements then
