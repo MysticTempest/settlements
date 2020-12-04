@@ -274,14 +274,9 @@ function settlements.fill_chest(pos)
   if math.random(0,1) < 1 then
     inv:add_item("main", "mcl_farming:bread "..math.random(0,3))
     inv:add_item("main", "mcl_core:iron_ingot "..math.random(0,3))
-    -- additional fillings when farmin mod enabled
-    if minetest.get_modpath("farming") ~= nil and farming.mod == "redo" then
-      if math.random(0,1) < 1 then
-        inv:add_item("main", "mcl_farming:melon_item "..math.random(0,3))
-        inv:add_item("mcl_farming:carrot_item "..math.random(0,3))
-        --inv:add_item("main", "farming:corn "..math.random(0,3))
-      end
-    end
+    --inv:add_item("main", "mcl_farming:melon_item "..math.random(0,3))
+    inv:add_item("main", "mcl_farming:carrot_item "..math.random(0,3))
+    --inv:add_item("main", "farming:corn "..math.random(0,3))
   end
   -- medium value items
   if math.random(0,3) < 1 then

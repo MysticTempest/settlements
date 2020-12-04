@@ -29,26 +29,18 @@ minetest.register_node("mcl2_settlements:junglewood", {
 --
 -- register inhabitants
 --
---[[Disable for now.
+
 if minetest.get_modpath("mobs_mc") ~= nil then
-  mobs:register_spawn("mobs_mc:npc", --name
-    {"settlements:junglewood"}, --nodes
+  mobs:register_spawn("mobs_mc:villager", --name
+    {"mcl2_settlements:junglewood"}, --nodes
     20, --max_light
     0, --min_light
     20, --chance
     7, --active_object_count
     31000, --max_height
     nil) --day_toggle
-  mobs:register_spawn("mobs_mc:trader", --name
-    {"settlements:junglewood"}, --nodes
-    20, --max_light
-    0, --min_light
-    20, --chance
-    7, --active_object_count
-    31000, --max_height
-    nil)--day_toggle
 end 
---]]
+
 --
 -- on map generation, try to build a settlement
 --
