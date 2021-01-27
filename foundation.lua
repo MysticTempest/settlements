@@ -1,48 +1,47 @@
 -------------------------------------------------------------------------------
 -- function to fill empty space below baseplate when building on a hill
 -------------------------------------------------------------------------------
-function settlements.ground_lvm(pos) -- role model: Wendelsteinkircherl, Brannenburg
-  local c_dirt  = minetest.get_content_id("mcl_core:dirt")
-  local c_stone = minetest.get_content_id("mcl_core:stone")
-  --
-  local p2 = settlements.shallowCopy(pos)
-  local cnt = 0
-  local mat = c_dirt
-  p2.y = p2.y-1
-  while true do
-    cnt = cnt+1
-    if cnt > 20 then break end
-    if cnt>math.random(2,4) then mat = c_stone end
-    --minetest.swap_node(p2, {name="mcl_core:"..mat})
-    local vi = va:index(p2.x, p2.y, p2.z)
-    data[vi] = mat
-    p2.y = p2.y-1
-  end
---  return data
+function settlements.ground_lvm(pos, pr) -- role model: Wendelsteinkircherl, Brannenburg
+	local c_dirt  = minetest.get_content_id("mcl_core:dirt")
+	local c_stone = minetest.get_content_id("mcl_core:stone")
+	--
+	local p2 = vector.new(pos)
+	local cnt = 0
+	local mat = c_dirt
+	p2.y = p2.y-1
+	while true do
+		cnt = cnt+1
+		if cnt > 20 then break end
+		if cnt>pr:next(2,4) then mat = c_stone end
+		--minetest.swap_node(p2, {name="mcl_core:"..mat})
+		local vi = va:index(p2.x, p2.y, p2.z)
+		data[vi] = mat
+		p2.y = p2.y-1
+	end
+	-- return data
 end
 -------------------------------------------------------------------------------
 -- function to fill empty space below baseplate when building on a hill
 -------------------------------------------------------------------------------
-function settlements.ground(pos) -- role model: Wendelsteinkircherl, Brannenburg
-  local p2 = settlements.shallowCopy(pos)
-  local cnt = 0
-  local mat = "mcl_core:dirt"
-  p2.y = p2.y-1
-  while true do
-    cnt = cnt+1
-    if cnt > 20 then break end
-    if cnt>math.random(2,4) 
-    then 
-      mat = "mcl_core:stone" 
-    end
-    minetest.swap_node(p2, {name=mat})
-    p2.y = p2.y-1
-  end
+function settlements.ground(pos, pr) -- role model: Wendelsteinkircherl, Brannenburg
+	local p2 = vector.new(pos)
+	local cnt = 0
+	local mat = "mcl_core:dirt"
+	p2.y = p2.y-1
+	while true do
+		cnt = cnt+1
+		if cnt > 20 then break end
+		if cnt>pr:next(2,4) then 
+			mat = "mcl_core:stone" 
+		end
+		minetest.swap_node(p2, {name=mat})
+		p2.y = p2.y-1
+	end
 end
 -------------------------------------------------------------------------------
 -- function clear space above baseplate 
 -------------------------------------------------------------------------------
-function settlements.terraform_lvm()
+function settlements.terraform_lvm(settlement_info, pr)
   local c_air = minetest.get_content_id("air")
   local fheight
   local fwidth
@@ -76,7 +75,7 @@ function settlements.terraform_lvm()
         for xi = 0,fwidth-1 do
           if yi == 0 then
             local p = {x=pos.x+xi, y=pos.y, z=pos.z+zi}
-            settlements.ground_lvm(p)
+            settlements.ground_lvm(p, pr)
           else
             --break --todo
             -- write ground
@@ -99,7 +98,7 @@ end
 -------------------------------------------------------------------------------
 -- function clear space above baseplate 
 -------------------------------------------------------------------------------
-function settlements.terraform()
+function settlements.terraform(settlement_info, pr)
   local fheight
   local fwidth
   local fdepth
@@ -133,7 +132,7 @@ function settlements.terraform()
         for yi = 0,fheight *3 do
           if yi == 0 then
             local p = {x=pos.x+xi, y=pos.y, z=pos.z+zi}
-            settlements.ground(p)
+            settlements.ground(p, pr)
           else
             -- write ground
             local p = {x=pos.x+xi, y=pos.y+yi, z=pos.z+zi}

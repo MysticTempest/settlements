@@ -9,8 +9,6 @@
 settlements = {}
 settlements.modpath = minetest.get_modpath("mcl_villages");
 
-vm, data, va, emin, emax = 1
-
 dofile(settlements.modpath.."/const.lua")
 dofile(settlements.modpath.."/utils.lua")
 dofile(settlements.modpath.."/foundation.lua")
@@ -56,119 +54,82 @@ end
 --
 -- on map generation, try to build a settlement
 --
-minetest.register_on_generated(function(minp, maxp)
-    --
-    -- needed for manual and automated settlement building
-    --
-    local heightmap = minetest.get_mapgen_object("heightmap")
-    --
-    -- randomly try to build settlements
-    -- 
-    if math.random(1,10)<=7 then
-      --
-      -- time between creation of two settlements
-      --
-      if os.difftime(os.time(), settlements.last_settlement) < settlements.min_timer 
-      then
-        return
-      end
---      if settlements.debug == true then
---         minetest.chat_send_all("Last opportunity ".. os.difftime(os.time(), settlements.last_settlement))
---      end
-      --
-      -- don't build settlement underground
-      --
-      if maxp.y < 0 then 
-        return 
-      end
-      --
-      -- don't build settlements too close to each other
-      --
-      local center_of_chunk = { 
-        x=maxp.x-half_map_chunk_size, 
-        y=maxp.y-half_map_chunk_size, 
-        z=maxp.z-half_map_chunk_size
-      } 
-      local dist_ok = settlements.check_distance_other_settlements(center_of_chunk)
-      if dist_ok == false 
-      then
-        return
-      end
-      --
-      -- don't build settlements on (too) uneven terrain
-      --
-      local height_difference = settlements.evaluate_heightmap(minp, maxp)
-      if height_difference > max_height_difference 
-      then
-        return
-      end
-      -- 
-      -- if no hard showstoppers prevent the settlement -> try to do it (check for suitable terrain)
-      --
-      -- set timestamp of actual settlement
-      --
-      settlements.last_settlement = os.time()
-      
-      -- waiting necessary for chunk to load, otherwise, townhall is not in the middle, no map found behind townhall
-      minetest.after(3, function()
-          local suitable_place_found = false
-          --
-          -- fill settlement_info with buildings and their data
-          --
-          if settlements.lvm == true
-          then
-            --
-            -- get LVM of current chunk
-            --
-            vm, data, va, emin, emax = settlements.getlvm(minp, maxp)
-            suitable_place_found = settlements.create_site_plan_lvm(maxp, minp)
-          else
-            suitable_place_found = settlements.create_site_plan(maxp, minp)
-          end
-          if not suitable_place_found
-          then
-            return
-          end
-          --
-          -- evaluate settlement_info and prepair terrain
-          --
-          if settlements.lvm == true
-          then
-            settlements.terraform_lvm()
-          else
-            settlements.terraform()
-          end
+local function build_a_settlement_no_delay(minp, maxp, blockseed)
+	local settlement_info
+	local pr = PseudoRandom(blockseed)
+	--
+	-- fill settlement_info with buildings and their data
+	--
+	if settlements.lvm == true then
+		-- get LVM of current chunk
+		local vm, data, va, emin, emax = settlements.getlvm(minp, maxp)
+		settlement_info = settlements.create_site_plan_lvm(maxp, minp, pr)
+	else
+		settlement_info = settlements.create_site_plan(maxp, minp, pr)
+	end
+	if not settlement_info then return end
 
-          --
-          -- evaluate settlement_info and build paths between buildings
-          --
-          if settlements.lvm == true
-          then
-            settlements.paths_lvm(minp)
-          else
-            settlements.paths()
-          end
-          --
-          -- evaluate settlement_info and place schematics
-          --
-          if settlements.lvm == true
-          then
-            vm:set_data(data)
-            settlements.place_schematics_lvm()
-            vm:write_to_map(true)
-          else
-            settlements.place_schematics()
-          end
-          --
-          -- evaluate settlement_info and initialize furnaces and chests
-          --
-          settlements.initialize_nodes()
-          
-        end)
+	-- evaluate settlement_info and prepair terrain
+	if settlements.lvm == true then
+		settlements.terraform_lvm(settlement_info, pr)
+	else
+		settlements.terraform(settlement_info, pr)
+	end
 
+	-- evaluate settlement_info and build paths between buildings
+	if settlements.lvm == true then
+		settlements.paths_lvm(settlement_info, minp)
+	else
+		settlements.paths(settlement_info)
+	end
 
-    end
-  end)
+	-- evaluate settlement_info and place schematics
+	if settlements.lvm == true then
+		vm:set_data(data)
+		settlements.place_schematics_lvm(settlement_info, pr)
+		vm:write_to_map(true)
+	else
+		settlements.place_schematics(settlement_info, pr)
+	end
+
+	-- evaluate settlement_info and initialize furnaces and chests
+	settlements.initialize_nodes(settlement_info, pr)
+end
+
+local function ecb_build_a_settlement(blockpos, action, calls_remaining, param)
+	if calls_remaining <= 0 then
+		build_a_settlement_no_delay(param.minp, param.maxp, param.blockseed)
+	end
+end
+
+minetest.register_on_generated(function(minp, maxp, blockseed)
+	-- needed for manual and automated settlement building
+	local heightmap = minetest.get_mapgen_object("heightmap")
+
+	-- randomly try to build settlements
+	if blockseed % 77 ~= 17 then return end
+
+	-- don't build settlement underground
+	if maxp.y < 0 then return end
+
+	-- don't build settlements too close to each other
+	local center_of_chunk = { 
+		x=maxp.x-half_map_chunk_size, 
+		y=maxp.y-half_map_chunk_size, 
+		z=maxp.z-half_map_chunk_size
+	} 
+	local dist_ok = settlements.check_distance_other_settlements(center_of_chunk)
+	if dist_ok == false then return end
+
+	-- don't build settlements on (too) uneven terrain
+	local height_difference = settlements.evaluate_heightmap(minp, maxp)
+	if height_difference > max_height_difference then return end
+
+	minetest.emerge_area(vector.subtract(minp,24), vector.add(maxp,24), ecb_build_a_settlement, {minp = vector.new(minp), maxp=vector.new(maxp), blockseed=blockseed})
+	-- old way - wait 3 seconds:
+	-- minetest.after(3, ecb_build_a_settlement, nil, 1, 0, {minp = vector.new(minp), maxp=vector.new(maxp), blockseed=blockseed})
+end)
+
 --
 -- manually place buildings, for debugging only
 --
@@ -201,8 +162,8 @@ minetest.register_craftitem("mcl_villages:tool", {
     -- build ssettlement
     --
     on_place = function(itemstack, placer, pointed_thing)
+		local pr = PseudoRandom(math.rand(0,32767))
       -- enable debug routines
-      settlements.debug = true
       local center_surface = pointed_thing.under
       if center_surface then
         local minp = {
@@ -218,57 +179,50 @@ minetest.register_craftitem("mcl_villages:tool", {
         --
         -- get LVM of current chunk
         --
-        vm, data, va, emin, emax = settlements.getlvm(minp, maxp)
+        local vm, data, va, emin, emax = settlements.getlvm(minp, maxp)
         --
         -- fill settlement_info with buildings and their data
         --
         local start_time = os.time()
-        local suitable_place_found = false
-        if settlements.lvm == true
-        then
-          suitable_place_found = settlements.create_site_plan_lvm(maxp, minp)
+        local settlement_info
+        if settlements.lvm == true then
+		settlement_info = settlements.create_site_plan_lvm(maxp, minp, pr)
         else
-          suitable_place_found = settlements.create_site_plan(maxp, minp)
+		settlement_info = settlements.create_site_plan(maxp, minp, pr)
         end
-        if not suitable_place_found
-        then
-          return
-        end
+        if not settlement_info then return end
         --
         -- evaluate settlement_info and prepair terrain
         --
-        if settlements.lvm == true
-        then
-          settlements.terraform_lvm()
+        if settlements.lvm == true then
+		settlements.terraform_lvm(settlement_info, pr)
         else
-          settlements.terraform()
+		settlements.terraform(settlement_info, pr)
         end
 
         --
         -- evaluate settlement_info and build paths between buildings
         --
-        if settlements.lvm == true
-        then
-          settlements.paths_lvm(minp)
+        if settlements.lvm == true then
+		settlements.paths_lvm(settlement_info, minp)
         else
-          settlements.paths()
+		settlements.paths(settlement_info)
         end
         --
         -- evaluate settlement_info and place schematics
         --
-        if settlements.lvm == true
-        then
-          vm:set_data(data)
-          settlements.place_schematics_lvm()
-          vm:write_to_map(true)
+        if settlements.lvm == true then
+		vm:set_data(data)
+		settlements.place_schematics_lvm(pr)
+		vm:write_to_map(true)
         else
-          settlements.place_schematics()
+		settlements.place_schematics()
         end
 
         --
         -- evaluate settlement_info and initialize furnaces and chests
         --
-        settlements.initialize_nodes()
+        settlements.initialize_nodes(settlement_info, pr)
         local end_time = os.time()
         minetest.chat_send_all("Time ".. end_time - start_time)
 --
